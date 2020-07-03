@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+     <script>
+          class EventEmitter{
+              constructor(){
+                  this._events ={}
+              }
+              on(event,cb){
+                  !this._events[event] && (this._events[event] = [])
+                  this. _events[event].push(cb)
+              }
+              off(event,cb){
+                  let callBacks = this._events[event]
+                  this._events[event] = callBacks && callBacks.filter(fn=>fn!=cb)
+              }
+              once(event,cb){
+                   let wrapFn = (...args)=>{
+                       cb.apply(this,args)
+                       this.off(event,cb)
+                   }
+                   this.on(event,wrapFn)
+              }
+              emit(...args){
+                  const event = args[0]
+                  let ars = Array.prototype.slice.call(args,1)
+                  let callBacks = this._events[event]
+                  callBacks && callBacks.forEach(fn=>fn.apply(this,ars))
+              }
+          }
+        const qp = new EventEmitter() 
+        qp.once('change',function(){
+            console.log(arguments)
+        })
+        qp.emit('change',1,2,3)
+       
+
+
+    </script> 
+
+
+
+</body>
+</html>
